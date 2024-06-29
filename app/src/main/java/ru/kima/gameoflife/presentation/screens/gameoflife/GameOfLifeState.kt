@@ -1,4 +1,4 @@
-package ru.kima.gameoflife.presentation.gameoflife
+package ru.kima.gameoflife.presentation.screens.gameoflife
 
 enum class GameOfLifeState {
     Stopped,

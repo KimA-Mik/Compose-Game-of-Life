@@ -1,4 +1,4 @@
-package ru.kima.gameoflife.presentation.gameoflife
+package ru.kima.gameoflife.presentation.screens.gameoflife
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
