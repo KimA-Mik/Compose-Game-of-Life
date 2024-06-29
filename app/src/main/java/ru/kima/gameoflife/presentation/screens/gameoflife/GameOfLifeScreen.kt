@@ -10,7 +10,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun GameOfLifeScreen(modifier: Modifier = Modifier) {
+fun GameOfLifeScreen(
+    state: ScreenState,
+    modifier: Modifier = Modifier
+) {
     Scaffold(modifier = modifier) { paddingValues ->
         GameOfLifeContent(
             modifier = Modifier.padding(paddingValues)
