@@ -20,24 +20,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.kima.gameoflife.R
+import ru.kima.gameoflife.presentation.screens.gameoflife.events.GameOfLifeUserEvent
 
 @Composable
 fun GameOfLifeScreen(
     state: ScreenState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onEvent: (GameOfLifeUserEvent) -> Unit
 ) {
     Scaffold(modifier = modifier,
         floatingActionButton = {
-            FabControl(state = state.state)
+            FabControl(state = state.state, onEvent = onEvent)
         }) { paddingValues ->
         GameOfLifeContent(
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues),
+            onEvent = onEvent
         )
     }
 }
 
 @Composable
-fun GameOfLifeContent(modifier: Modifier = Modifier) {
+fun GameOfLifeContent(
+    modifier: Modifier = Modifier,
+    onEvent: (GameOfLifeUserEvent) -> Unit
+) {
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -50,28 +56,32 @@ fun GameOfLifeContent(modifier: Modifier = Modifier) {
 @Composable
 fun FabControl(
     state: GameOfLifeState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onEvent: (GameOfLifeUserEvent) -> Unit
 ) {
     when (state) {
-        GameOfLifeState.Stopped -> StoppedFab(modifier = modifier)
-        GameOfLifeState.Running -> RunningFab(modifier = modifier)
-        GameOfLifeState.Editable -> EditableFab(modifier = modifier)
+        GameOfLifeState.Stopped -> StoppedFab(modifier = modifier, onEvent = onEvent)
+        GameOfLifeState.Running -> RunningFab(modifier = modifier, onEvent = onEvent)
+        GameOfLifeState.Editable -> EditableFab(modifier = modifier, onEvent = onEvent)
     }
 }
 
 @Composable
-fun StoppedFab(modifier: Modifier = Modifier) {
+fun StoppedFab(
+    modifier: Modifier = Modifier,
+    onEvent: (GameOfLifeUserEvent) -> Unit
+) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        FloatingActionButton(onClick = { /*TODO*/ }) {
+        FloatingActionButton(onClick = { onEvent(GameOfLifeUserEvent.EditField) }) {
             Icon(
                 imageVector = Icons.Default.Edit,
                 contentDescription = stringResource(R.string.edit_fab_content_description)
             )
         }
-        FloatingActionButton(onClick = { /*TODO*/ }) {
+        FloatingActionButton(onClick = { onEvent(GameOfLifeUserEvent.RunGame) }) {
             Icon(
                 imageVector = Icons.Default.Start,
                 contentDescription = stringResource(R.string.run_fab_content_description)
@@ -81,9 +91,12 @@ fun StoppedFab(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun RunningFab(modifier: Modifier = Modifier) {
+fun RunningFab(
+    modifier: Modifier = Modifier,
+    onEvent: (GameOfLifeUserEvent) -> Unit
+) {
     FloatingActionButton(
-        onClick = { /*TODO*/ },
+        onClick = { onEvent(GameOfLifeUserEvent.StopGame) },
         modifier = modifier
     ) {
         Icon(
@@ -94,9 +107,12 @@ fun RunningFab(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun EditableFab(modifier: Modifier = Modifier) {
+fun EditableFab(
+    modifier: Modifier = Modifier,
+    onEvent: (GameOfLifeUserEvent) -> Unit
+) {
     FloatingActionButton(
-        onClick = { /*TODO*/ },
+        onClick = { onEvent(GameOfLifeUserEvent.SaveField) },
         modifier = modifier
     ) {
         Icon(
