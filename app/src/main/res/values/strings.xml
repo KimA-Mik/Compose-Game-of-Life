@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Game of Life</string>
+    <string name="run_fab_content_description">Run Game of Life</string>
+    <string name="edit_fab_content_description">Edit Game of Lif</string>
+    <string name="stop_fab_content_description">Stop Game of Lif</string>
+    <string name="save_fab_content_description">Save Game of Lif</string>
 </resources>

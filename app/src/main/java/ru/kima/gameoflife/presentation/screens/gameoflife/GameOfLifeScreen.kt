@@ -17,7 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import ru.kima.gameoflife.R
 
 @Composable
 fun GameOfLifeScreen(
@@ -64,10 +66,16 @@ fun StoppedFab(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         FloatingActionButton(onClick = { /*TODO*/ }) {
-            Icon(imageVector = Icons.Default.Edit, contentDescription = "Run")
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = stringResource(R.string.edit_fab_content_description)
+            )
         }
         FloatingActionButton(onClick = { /*TODO*/ }) {
-            Icon(imageVector = Icons.Default.Start, contentDescription = "Run")
+            Icon(
+                imageVector = Icons.Default.Start,
+                contentDescription = stringResource(R.string.run_fab_content_description)
+            )
         }
     }
 }
@@ -78,7 +86,10 @@ fun RunningFab(modifier: Modifier = Modifier) {
         onClick = { /*TODO*/ },
         modifier = modifier
     ) {
-        Icon(imageVector = Icons.Default.Stop, contentDescription = "Run")
+        Icon(
+            imageVector = Icons.Default.Stop,
+            contentDescription = stringResource(R.string.stop_fab_content_description)
+        )
     }
 }
 
@@ -88,6 +99,9 @@ fun EditableFab(modifier: Modifier = Modifier) {
         onClick = { /*TODO*/ },
         modifier = modifier
     ) {
-        Icon(imageVector = Icons.Default.Save, contentDescription = "Run")
+        Icon(
+            imageVector = Icons.Default.Save,
+            contentDescription = stringResource(R.string.save_fab_content_description)
+        )
     }
 }
