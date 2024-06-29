@@ -1,4 +1,4 @@
-package ru.kima.gameoflife.presentation.theme
+package ru.kima.gameoflife.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
