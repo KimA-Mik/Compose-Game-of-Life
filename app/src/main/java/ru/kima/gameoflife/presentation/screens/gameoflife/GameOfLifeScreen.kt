@@ -1,5 +1,6 @@
 package ru.kima.gameoflife.presentation.screens.gameoflife
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,10 +60,12 @@ fun FabControl(
     modifier: Modifier = Modifier,
     onEvent: (GameOfLifeUserEvent) -> Unit
 ) {
-    when (state) {
-        GameOfLifeState.Stopped -> StoppedFab(modifier = modifier, onEvent = onEvent)
-        GameOfLifeState.Running -> RunningFab(modifier = modifier, onEvent = onEvent)
-        GameOfLifeState.Editable -> EditableFab(modifier = modifier, onEvent = onEvent)
+    AnimatedContent(targetState = state, label = "") {
+        when (it) {
+            GameOfLifeState.Stopped -> StoppedFab(modifier = modifier, onEvent = onEvent)
+            GameOfLifeState.Running -> RunningFab(modifier = modifier, onEvent = onEvent)
+            GameOfLifeState.Editable -> EditableFab(modifier = modifier, onEvent = onEvent)
+        }
     }
 }
 
