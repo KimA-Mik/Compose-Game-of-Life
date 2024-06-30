@@ -9,9 +9,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import ru.kima.gameoflife.GameOfLifeApplication
+import ru.kima.gameoflife.domain.gameoflife.GameOfLife
 import ru.kima.gameoflife.presentation.screens.gameoflife.events.GameOfLifeUserEvent
 
-class GameOfLifeViewmodel : ViewModel() {
+class GameOfLifeViewmodel(gameOfLife: GameOfLife) : ViewModel() {
     private val _state = MutableStateFlow(ScreenState())
     val state = _state.asStateFlow()
 
@@ -33,8 +34,8 @@ class GameOfLifeViewmodel : ViewModel() {
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                (this[APPLICATION_KEY] as GameOfLifeApplication)
-                GameOfLifeViewmodel()
+                val gameOfLife = (this[APPLICATION_KEY] as GameOfLifeApplication).gameOfLife
+                GameOfLifeViewmodel(gameOfLife = gameOfLife)
             }
         }
     }
