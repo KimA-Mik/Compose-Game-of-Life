@@ -1,23 +1,28 @@
 package ru.kima.gameoflife.domain.gameoflife
 
 import android.util.Log
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlin.system.measureTimeMillis
 
 private const val TAG = "GameOfLife"
 
 class GameOfLife {
-    val fieldWidth = 10
-    val fieldHeight = 10
+    val fieldWidth = 25
+    val fieldHeight = 25
     private var _field = IntArray(fieldWidth * fieldHeight)
 
     init {
-        var index = coordinatesToPIndex(0, 0)
+        val centerX = fieldWidth / 2
+        val centerY = fieldHeight / 2
+
+        var index = coordinatesToPIndex(centerX, centerY)
         _field[index] = ALIVE
-        index = coordinatesToPIndex(1, 0)
+        index = coordinatesToPIndex(centerX + 1, centerY)
         _field[index] = ALIVE
-        index = coordinatesToPIndex(0, 1)
+        index = coordinatesToPIndex(centerX, centerY + 1)
         _field[index] = ALIVE
     }
 
@@ -26,20 +31,23 @@ class GameOfLife {
         return y * fieldWidth + x
     }
 
+    //TODO: Extract field to stateflow
     fun gameLoop() = flow {
         while (true) {
-            Log.i(TAG, "Game tick")
             val gameTime = measureTimeMillis {
                 _field = getNewField()
             }
-            emit(_field)
+            Log.i(TAG, "Game tick took $gameTime ms")
+            emit(_field.toList())
 
 
             if (gameTime < SECOND_MILLIS) {
                 delay(SECOND_MILLIS - gameTime)
+            } else {
+                Log.w(TAG, "Too slow")
             }
         }
-    }
+    }.flowOn(Dispatchers.Default)
 
     private fun getNewField(): IntArray {
         val newField = IntArray(_field.size)
@@ -75,6 +83,10 @@ class GameOfLife {
         var res = 0
         for (checkY in y - 1..y + 1) {
             for (checkX in x - 1..x + 1) {
+                if (checkY == y && checkX == x) {
+                    continue
+                }
+
                 val actualX = wrapCoordinate(checkX, 0, fieldWidth)
                 val actualY = wrapCoordinate(checkY, 0, fieldHeight)
 
@@ -90,7 +102,7 @@ class GameOfLife {
 
     private fun wrapCoordinate(coordinate: Int, leftBorder: Int, rightBorder: Int): Int {
         return if (coordinate < leftBorder) rightBorder - (leftBorder - coordinate)
-        else if (coordinate > rightBorder) leftBorder + (coordinate - rightBorder)
+        else if (coordinate >= rightBorder) leftBorder + (coordinate - rightBorder)
         else coordinate
     }
 
@@ -98,7 +110,7 @@ class GameOfLife {
         private const val SECOND_MILLIS = 1000L
         private val ALIVE_CONDITIONS = intArrayOf(2, 3)
 
-        private const val DEAD = 0
-        private const val ALIVE = 1
+        const val DEAD = 0
+        const val ALIVE = 1
     }
 }
