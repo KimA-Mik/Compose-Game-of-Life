@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -17,12 +18,11 @@ import ru.kima.gameoflife.presentation.screens.gameoflife.events.GameOfLifeUserE
 class GameOfLifeViewmodel(private val gameOfLife: GameOfLife) : ViewModel() {
     private var gameJob: Job? = null
 
-    private val _field = MutableStateFlow(emptyList<Int>())
     private val _gameState = MutableStateFlow(GameOfLifeState.Stopped)
 
     val state = combine(
         _gameState,
-        _field
+        gameOfLife.field
     ) { gameState, field ->
         ScreenState(
             state = gameState,
@@ -50,10 +50,8 @@ class GameOfLifeViewmodel(private val gameOfLife: GameOfLife) : ViewModel() {
         _gameState.value = state
     }
 
-    private fun runGame(): Job = viewModelScope.launch {
-        gameOfLife.gameLoop().collect {
-            _field.value = it
-        }
+    private fun runGame(): Job = viewModelScope.launch(Dispatchers.Default) {
+        gameOfLife.gameLoop()
     }
 
     companion object {
