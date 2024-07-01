@@ -3,17 +3,34 @@ package ru.kima.gameoflife.presentation.screens.gameoflife
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import ru.kima.gameoflife.GameOfLifeApplication
+import ru.kima.gameoflife.domain.gameoflife.GameOfLife
 import ru.kima.gameoflife.presentation.screens.gameoflife.events.GameOfLifeUserEvent
 
-class GameOfLifeViewmodel : ViewModel() {
-    private val _state = MutableStateFlow(ScreenState())
-    val state = _state.asStateFlow()
+class GameOfLifeViewmodel(private val gameOfLife: GameOfLife) : ViewModel() {
+    private var gameJob: Job? = null
+
+    private val _field = MutableStateFlow(emptyList<Int>())
+    private val _gameState = MutableStateFlow(GameOfLifeState.Stopped)
+
+    val state = combine(
+        _gameState,
+        _field
+    ) { gameState, field ->
+        ScreenState(
+            state = gameState,
+            fieldWidth = gameOfLife.fieldWidth,
+            fieldHeight = gameOfLife.fieldHeight,
+            field = field
+        )
+    }
 
     fun onEvent(event: GameOfLifeUserEvent) {
         when (event) {
@@ -25,16 +42,25 @@ class GameOfLifeViewmodel : ViewModel() {
     }
 
     private fun updateGameState(state: GameOfLifeState) {
-        _state.update {
-            it.copy(state = state)
+        when (state) {
+            GameOfLifeState.Running -> gameJob = runGame()
+            else -> gameJob?.cancel()
+        }
+
+        _gameState.value = state
+    }
+
+    private fun runGame(): Job = viewModelScope.launch {
+        gameOfLife.gameLoop().collect {
+            _field.value = it
         }
     }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                (this[APPLICATION_KEY] as GameOfLifeApplication)
-                GameOfLifeViewmodel()
+                val gameOfLife = (this[APPLICATION_KEY] as GameOfLifeApplication).gameOfLife
+                GameOfLifeViewmodel(gameOfLife = gameOfLife)
             }
         }
     }
