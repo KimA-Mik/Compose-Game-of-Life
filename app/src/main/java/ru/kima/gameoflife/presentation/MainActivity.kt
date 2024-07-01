@@ -14,6 +14,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.kima.gameoflife.presentation.screens.gameoflife.GameOfLifeScreen
 import ru.kima.gameoflife.presentation.screens.gameoflife.GameOfLifeViewmodel
+import ru.kima.gameoflife.presentation.screens.gameoflife.ScreenState
 import ru.kima.gameoflife.presentation.screens.gameoflife.events.GameOfLifeUserEvent
 import ru.kima.gameoflife.presentation.ui.theme.GameOfLifeTheme
 
@@ -23,7 +24,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val viewmodel: GameOfLifeViewmodel = viewModel(factory = GameOfLifeViewmodel.Factory)
-            val state by viewmodel.state.collectAsStateWithLifecycle()
+            val state by viewmodel.state.collectAsStateWithLifecycle(ScreenState())
             val onEvent = remember<(GameOfLifeUserEvent) -> Unit> {
                 {
                     viewmodel.onEvent(it)
