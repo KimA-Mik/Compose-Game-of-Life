@@ -3,29 +3,28 @@ package ru.kima.gameoflife.presentation.screens.gameoflife.layout
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.layout.LazyLayoutItemProvider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.kima.gameoflife.presentation.screens.gameoflife.model.CellItem
 
-typealias CellItemContent = @Composable (cellState: Int) -> Unit
+typealias CellItemContent = @Composable (cell: CellItem) -> Unit
+typealias CellItemOnClick = (item: CellItem) -> Unit
 
 @Composable
 fun rememberItemProvider(
     items: List<CellItem>,
-    layout: CellItemContent
+    content: CellItemContent
 ): GameOfLifeLazyItemProvider {
     return remember(items) {
-        GameOfLifeLazyItemProvider(items, layout)
+        GameOfLifeLazyItemProvider(items, content)
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 class GameOfLifeLazyItemProvider(
     private val items: List<CellItem>,
-    private val layout: CellItemContent
+    private val content: CellItemContent
 ) : LazyLayoutItemProvider {
     override val itemCount = items.size
 
@@ -62,8 +61,7 @@ class GameOfLifeLazyItemProvider(
     override fun Item(index: Int, key: Any) {
         val item = items.getOrNull(index)
         item?.let {
-            val state by it.state.collectAsStateWithLifecycle()
-            layout(state)
+            content(it)
         }
     }
 }

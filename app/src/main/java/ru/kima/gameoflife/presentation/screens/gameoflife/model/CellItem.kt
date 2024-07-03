@@ -37,4 +37,8 @@ class CellItem(
         result = 31 * result + _state.value
         return result
     }
+
+    override fun toString(): String {
+        return "CellItem(cellState:${state.value}, x:$x, y:$y"
+    }
 }

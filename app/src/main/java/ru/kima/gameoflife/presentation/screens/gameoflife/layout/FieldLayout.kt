@@ -1,6 +1,7 @@
 package ru.kima.gameoflife.presentation.screens.gameoflife.layout
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -28,6 +29,7 @@ fun FieldLayout(
     items: List<CellItem>,
     state: FieldLayoutState,
     modifier: Modifier = Modifier,
+    cellOnClick: CellItemOnClick,
     cell: @Composable (cellState: Int) -> Unit
 ) {
 
@@ -35,8 +37,11 @@ fun FieldLayout(
     val cellPadding = remember(cellScale) { CELL_SIZE * cellScale * PADDING_RATIO }
     val offsets by state.offsetState.collectAsStateWithLifecycle()
 
-    val itemProvider = rememberItemProvider(items = items) { cellState ->
-        Box(modifier = Modifier.size(cellScale * CELL_SIZE)) {
+    val itemProvider = rememberItemProvider(items = items) { cell ->
+        val cellState by cell.state.collectAsStateWithLifecycle()
+        Box(modifier = Modifier
+            .size(cellScale * CELL_SIZE)
+            .clickable { cellOnClick(cell) }) {
             cell(cellState)
         }
     }
@@ -73,8 +78,8 @@ fun Placeable.PlacementScope.placeItem(
     cellPadding: Int,
     placeables: List<Placeable>
 ) {
-    val xPosition = item.x * (cellSize + cellPadding) - offset.x// + cellPadding
-    val yPosition = item.y * (cellSize + cellPadding) - offset.y// + cellPadding
+    val xPosition = item.x * (cellSize) - offset.x + cellPadding
+    val yPosition = item.y * (cellSize) - offset.y + cellPadding
 
     placeables.forEach { placeable ->
         placeable.place(

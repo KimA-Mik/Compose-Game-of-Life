@@ -1,7 +1,7 @@
 package ru.kima.gameoflife.presentation.screens.gameoflife
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,7 +48,7 @@ fun GameOfLifeScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+private const val TAG = "GameOfLifeContent"
 @Composable
 fun GameOfLifeContent(
     state: ScreenState,
@@ -63,7 +63,10 @@ fun GameOfLifeContent(
     FieldLayout(
         items = state.cells,
         state = layoutState,
-        modifier = modifier
+        modifier = modifier,
+        cellOnClick = {
+            Log.d(TAG, it.toString())
+        }
     ) { cellState ->
         Cell(state = cellState)
     }
