@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.geometry.Offset
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -17,20 +17,28 @@ private const val TAG = "FieldLayoutState"
 
 @Stable
 class FieldLayoutState {
-    private val _offsetState = MutableStateFlow(IntOffset(0, 0))
+    private val _offsetState = MutableStateFlow(Offset(0f, 0f))
     val offsetState = _offsetState.asStateFlow()
 
-    private val _elementScale = MutableStateFlow(0.5f)
+    private val _elementScale = MutableStateFlow(1f)
     val elementScale = _elementScale.asStateFlow()
 
-    fun onDrag(offset: IntOffset) {
-        val x = (_offsetState.value.x - offset.x).coerceAtLeast(0)
-        val y = (_offsetState.value.y - offset.y).coerceAtLeast(0)
-        _offsetState.value = IntOffset(x, y)
-        Log.d(TAG, _offsetState.value.toString())
+    fun onDrag(offset: Offset) {
+        val x = (_offsetState.value.x - offset.x).coerceAtLeast(0f)
+        val y = (_offsetState.value.y - offset.y).coerceAtLeast(0f)
+        _offsetState.value = Offset(x, y)
+        Log.d(TAG, "onDrag($offset)")
+    }
+
+    fun setOffset(offset: Offset) {
+        val x = offset.x.coerceAtLeast(0f)
+        val y = offset.y.coerceAtLeast(0f)
+        _offsetState.value = Offset(x, y)
+        Log.d(TAG, "setOffset($offset)")
+
     }
 
     fun onZoom(newSize: Float) {
-        _elementScale.value = newSize.coerceAtLeast(0.1f).coerceAtMost(0.7f)
+        _elementScale.value = newSize.coerceAtLeast(1f)//.coerceAtMost(0.7f)
     }
 }
