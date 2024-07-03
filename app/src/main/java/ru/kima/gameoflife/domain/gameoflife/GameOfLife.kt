@@ -16,14 +16,12 @@ class GameOfLife {
     private val _field: MutableStateFlow<List<Int>>
     init {
         val fieldList = MutableList(fieldWidth * fieldHeight) { DEAD }
-        val centerX = fieldWidth / 2
-        val centerY = fieldHeight / 2
 
-        var index = coordinatesToPIndex(centerX, centerY)
+        var index = coordinatesToPIndex(0, 0)
         fieldList[index] = ALIVE
-        index = coordinatesToPIndex(centerX + 1, centerY)
+        index = coordinatesToPIndex(1, 0)
         fieldList[index] = ALIVE
-        index = coordinatesToPIndex(centerX, centerY + 1)
+        index = coordinatesToPIndex(0, 1)
         fieldList[index] = ALIVE
         _field = MutableStateFlow(fieldList)
     }
