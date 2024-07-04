@@ -39,6 +39,6 @@ class FieldLayoutState {
     }
 
     fun onZoom(newSize: Float) {
-        _elementScale.value = newSize.coerceAtLeast(1f)//.coerceAtMost(0.7f)
+        _elementScale.value = newSize.coerceAtLeast(0.1f)//.coerceAtMost(0.7f)
     }
 }
