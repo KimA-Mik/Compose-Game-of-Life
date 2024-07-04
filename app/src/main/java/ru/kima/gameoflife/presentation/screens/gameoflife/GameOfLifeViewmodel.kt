@@ -41,7 +41,12 @@ class GameOfLifeViewmodel(private val gameOfLife: GameOfLife) : ViewModel() {
             GameOfLifeUserEvent.RunGame -> updateGameState(GameOfLifeState.Running)
             GameOfLifeUserEvent.SaveField -> updateGameState(GameOfLifeState.Stopped)
             GameOfLifeUserEvent.StopGame -> updateGameState(GameOfLifeState.Stopped)
+            is GameOfLifeUserEvent.EditCell -> onEditCell(event.x, event.y)
         }
+    }
+
+    private fun onEditCell(x: Int, y: Int) {
+        gameOfLife.editCell(x, y)
     }
 
     private fun createField(): List<CellItem> {

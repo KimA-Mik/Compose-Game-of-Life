@@ -32,6 +32,19 @@ class GameOfLife {
 
     val field = _field.asStateFlow()
 
+    fun editCell(x: Int, y: Int) {
+        val newField = _field.value.toMutableList()
+        val index = coordinatesToPIndex(x, y)
+
+        val oldValue = newField[index]
+        newField[index] = if (oldValue == DEAD) {
+            ALIVE
+        } else {
+            DEAD
+        }
+
+        _field.value = newField
+    }
 
     private fun coordinatesToPIndex(x: Int, y: Int): Int {
         return y * fieldWidth + x
