@@ -1,6 +1,5 @@
 package ru.kima.gameoflife.presentation.screens.gameoflife.layout
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -12,8 +11,6 @@ import kotlinx.coroutines.flow.asStateFlow
 fun rememberFieldLayoutState(): FieldLayoutState {
     return remember { FieldLayoutState() }
 }
-
-private const val TAG = "FieldLayoutState"
 
 @Stable
 class FieldLayoutState {
@@ -27,15 +24,12 @@ class FieldLayoutState {
         val x = (_offsetState.value.x - offset.x).coerceAtLeast(0f)
         val y = (_offsetState.value.y - offset.y).coerceAtLeast(0f)
         _offsetState.value = Offset(x, y)
-        Log.d(TAG, "onDrag($offset)")
     }
 
     fun setOffset(offset: Offset) {
         val x = offset.x.coerceAtLeast(0f)
         val y = offset.y.coerceAtLeast(0f)
         _offsetState.value = Offset(x, y)
-        Log.d(TAG, "setOffset($offset)")
-
     }
 
     fun onZoom(newSize: Float) {
