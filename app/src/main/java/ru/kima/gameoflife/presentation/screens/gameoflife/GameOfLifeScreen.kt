@@ -3,6 +3,7 @@ package ru.kima.gameoflife.presentation.screens.gameoflife
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,6 +50,7 @@ fun GameOfLifeScreen(
 }
 
 private const val TAG = "GameOfLifeContent"
+
 @Composable
 fun GameOfLifeContent(
     state: ScreenState,
@@ -82,6 +84,7 @@ fun Cell(
     Box(
         modifier = modifier
             .background(color = color)
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.primary)
             .aspectRatio(1f)
     )
 }
