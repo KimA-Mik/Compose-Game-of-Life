@@ -17,11 +17,15 @@ class GameOfLife {
     init {
         val fieldList = MutableList(fieldWidth * fieldHeight) { DEAD }
 
-        var index = coordinatesToPIndex(0, 0)
+        var index = coordinatesToPIndex(1, 0)
         fieldList[index] = ALIVE
-        index = coordinatesToPIndex(1, 0)
+        index = coordinatesToPIndex(2, 1)
         fieldList[index] = ALIVE
-        index = coordinatesToPIndex(0, 1)
+        index = coordinatesToPIndex(0, 2)
+        fieldList[index] = ALIVE
+        index = coordinatesToPIndex(1, 2)
+        fieldList[index] = ALIVE
+        index = coordinatesToPIndex(2, 2)
         fieldList[index] = ALIVE
         _field = MutableStateFlow(fieldList)
     }
@@ -53,10 +57,11 @@ class GameOfLife {
         val newField = MutableList(_field.value.size) { DEAD }
         for (y in 0 until fieldHeight) {
             for (x in 0 until fieldWidth) {
-                val neighbours = countNeighbours(x, y)
-                val isAlive = isCellAlive(neighbours)
-
                 val index = coordinatesToPIndex(x, y)
+                val currentCell = field.value[index]
+
+                val neighbours = countNeighbours(x, y)
+                val isAlive = isCellAlive(currentCell, neighbours)
 
                 newField[index] = if (isAlive) {
                     ALIVE
@@ -69,8 +74,14 @@ class GameOfLife {
         return newField
     }
 
-    private fun isCellAlive(neighbours: Int): Boolean {
-        for (condition in ALIVE_CONDITIONS) {
+    private fun isCellAlive(currentState: Int, neighbours: Int): Boolean {
+        val conditions = if (currentState == DEAD) {
+            BIRTH_CONDITIONS
+        } else {
+            ALIVE_CONDITIONS
+        }
+
+        for (condition in conditions) {
             if (condition == neighbours) {
                 return true
             }
@@ -109,6 +120,7 @@ class GameOfLife {
     companion object {
         private const val SECOND_MILLIS = 1000L
         private val ALIVE_CONDITIONS = intArrayOf(2, 3)
+        private val BIRTH_CONDITIONS = intArrayOf(3)
 
         const val DEAD = 0
         const val ALIVE = 1
