@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Placeable
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
@@ -35,17 +36,18 @@ fun FieldLayout(
 
     val cellScale by state.elementScale.collectAsStateWithLifecycle()
     val cellPadding = remember(cellScale) { CELL_SIZE * cellScale * PADDING_RATIO }
-    val offsets by state.offsetState.collectAsStateWithLifecycle()
+    val offset by state.offsetState.collectAsStateWithLifecycle()
 
-    val itemProvider = rememberItemProvider(items = items) { cell ->
-        val cellState by cell.state.collectAsStateWithLifecycle()
+    val itemProvider = rememberItemProvider(items = items) {
+        val cellState by it.state.collectAsStateWithLifecycle()
         Box(modifier = Modifier
             .size(cellScale * CELL_SIZE)
-            .clickable { cellOnClick(cell) }) {
+            .clickable { cellOnClick(it) }) {
             cell(cellState)
         }
     }
 
+    val intOffset = offset.toIntOffset()
     LazyLayout(
         itemProvider = { itemProvider },
         modifier = modifier.dragFieldLayout(state)
@@ -54,18 +56,17 @@ fun FieldLayout(
         val indexes = itemProvider.getIndexesInConstrains(
             constraints = constraints,
             spaceTaken = totalCellSize.roundToPx(),
-            offset = IntOffset(offsets.x.roundToInt(), offsets.y.roundToInt())
+            offset = intOffset
         )
         val indexesWithPlaceables = indexes.associateWith {
-            measure(it, constraints)
+            measure(it, Constraints())
         }
         val cellPx = (CELL_SIZE * cellScale).roundToPx()
         val paddingPx = cellPadding.roundToPx()
-
         layout(constraints.maxWidth, constraints.maxHeight) {
             indexesWithPlaceables.forEach { (index, placeables) ->
                 val item = itemProvider.getItem(index)
-                item?.let { placeItem(offsets.toIntOffset(), item, cellPx, paddingPx, placeables) }
+                item?.let { placeItem(intOffset, item, cellPx, paddingPx, placeables) }
             }
         }
     }
