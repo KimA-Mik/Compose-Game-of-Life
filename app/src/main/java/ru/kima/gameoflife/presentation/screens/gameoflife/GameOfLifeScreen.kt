@@ -1,14 +1,13 @@
 package ru.kima.gameoflife.presentation.screens.gameoflife
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Save
@@ -18,7 +17,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import ru.kima.gameoflife.R
 import ru.kima.gameoflife.domain.gameoflife.GameOfLife
 import ru.kima.gameoflife.presentation.screens.gameoflife.events.GameOfLifeUserEvent
+import ru.kima.gameoflife.presentation.screens.gameoflife.layout.FieldLayout
+import ru.kima.gameoflife.presentation.screens.gameoflife.layout.rememberFieldLayoutState
 
 @Composable
 fun GameOfLifeScreen(
@@ -57,16 +57,17 @@ fun GameOfLifeContent(
         return
     }
 
-    LazyVerticalGrid(
+    val layoutState = rememberFieldLayoutState()
+    FieldLayout(
+        items = state.cells,
+        state = layoutState,
         modifier = modifier,
-        columns = GridCells.Fixed(state.fieldWidth),
-        verticalArrangement = Arrangement.spacedBy(1.dp),
-        horizontalArrangement = Arrangement.spacedBy(1.dp)
-    ) {
-        items(items = state.field) {
-            Cell(state = it)
+        cellClickable = state.state == GameOfLifeState.Editable,
+        cellOnClick = {
+            onEvent(GameOfLifeUserEvent.EditCell(it.x, it.y))
         }
-
+    ) { cellState ->
+        Cell(state = cellState)
     }
 }
 
@@ -77,9 +78,11 @@ fun Cell(
 ) {
     val color =
         if (state == GameOfLife.ALIVE) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.surface
-    Surface(modifier = modifier.aspectRatio(1f), color = color) {
-
-    }
+    Box(
+        modifier = modifier
+            .background(color = color)
+            .aspectRatio(1f)
+    )
 }
 
 
